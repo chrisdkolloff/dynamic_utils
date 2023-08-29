@@ -7,6 +7,9 @@ from dynamics_utils.utils.decorators import ensure_tensor
 from dynamics_utils.msm import timescales_from_eigvals, amplitudes_from_observables
 
 
+def test_function():
+    print('Test passed!')
+
 @ensure_tensor
 def r1rho(nu1: Union[np.ndarray, torch.Tensor], c: Union[np.ndarray, torch.Tensor],
           tex: Union[np.ndarray, torch.Tensor], nu0: Union[float, int]) -> Union[np.ndarray, torch.Tensor]:
