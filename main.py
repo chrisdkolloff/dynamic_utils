@@ -5,7 +5,3 @@ import torch
 
 a = np.array([1, 2, 3])
 b = torch.tensor([1, 2, 3])
-
-from dynamics_utils.msm import calculate_acf
-
-calculate_acf(a, a)
