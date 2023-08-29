@@ -3,7 +3,7 @@ from typing import Union
 import numpy as np
 import torch
 
-from dynamics_utils.utils.decorators import ensure_tensor
+from .utils.decorators import ensure_tensor
 
 @ensure_tensor
 def timescales_from_eigvals(eigvals: Union[np.ndarray, torch.Tensor], lag: int = 1, dt_traj: float = 1.) \

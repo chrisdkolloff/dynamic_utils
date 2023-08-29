@@ -3,8 +3,8 @@ from typing import Union
 import numpy as np
 import torch
 
-from dynamics_utils.utils.decorators import ensure_tensor
-from dynamics_utils.msm import timescales_from_eigvals, amplitudes_from_observables
+from .utils.decorators import ensure_tensor
+from .msm import timescales_from_eigvals, amplitudes_from_observables
 
 
 def test_function():

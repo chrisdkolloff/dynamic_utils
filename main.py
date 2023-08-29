@@ -6,9 +6,6 @@ from dynamics_utils.utils.decorators import ensure_tensor
 a = np.array([1, 2, 3])
 b = torch.tensor([1, 2, 3])
 
-@ensure_tensor
-def f(a, b):
-    x = a + b
-    return x
+from dynamics_utils.msm import calculate_acf
 
-o = f(a, 3)
+calculate_acf(a, a)
