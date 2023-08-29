@@ -1,0 +1,6 @@
+Metadata-Version: 2.1
+Name: dynamic-utils
+Version: 0.0
+Summary: Utils for dealing with dynamic data (MSM, NMR, etc.)
+Author: chrisdkolloff
+Author-email: chrisdkolloff@gmail.com

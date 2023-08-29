@@ -1,0 +1,10 @@
+README.md
+setup.py
+dynamic_utils.egg-info/PKG-INFO
+dynamic_utils.egg-info/SOURCES.txt
+dynamic_utils.egg-info/dependency_links.txt
+dynamic_utils.egg-info/requires.txt
+dynamic_utils.egg-info/top_level.txt
+dynamics_utils/__init__.py
+dynamics_utils/msm.py
+dynamics_utils/nmr.py
