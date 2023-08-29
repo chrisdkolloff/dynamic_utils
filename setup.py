@@ -7,7 +7,7 @@ setup(
     description='Utils for dealing with dynamic data (MSM, NMR, etc.)',
     url='https://github.com/chrisdkolloff/dynamics_utils.git',
     version='0.0',
-    packages=['dynamics_utils'],
+    packages=find_packages(),
     install_requires=[
         'numpy', 'torch'
     ],
