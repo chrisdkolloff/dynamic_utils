@@ -8,7 +8,7 @@ b = torch.tensor([1, 2, 3])
 
 @ensure_tensor
 def f(a, b):
-    x = a.dot(b)
+    x = a + b
     return x
 
-o = f(a, a)
+o = f(a, 3)
