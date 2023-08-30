@@ -2,7 +2,7 @@ from typing import Union, Tuple
 
 import numpy as np
 import torch
-from deeptime.markov import rdl_decomposition
+from deeptime.markov.tools.analysis import rdl_decomposition
 
 from .utils.decorators import ensure_tensor
 from .utils.torch_utils import matrix_power
@@ -379,11 +379,26 @@ def calculate_leigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
     """
     return torch.diag(stationary_distribution).mm(reigvecs)
 
+@ensure_tensor
+def calculate_stationary_observable(a: Union[np.ndarray, torch.Tensor],
+                                    stationary_distribution: Union[np.ndarray, torch.Tensor])\
+        -> Union[np.ndarray, torch.Tensor]:
+    """
+    Calculates the stationary observable
+    Parameters
+    ----------
+    a:  Union[np.ndarray, torch.Tensor] (n, k)
+        observable
+    stationary_distribution:   Union[np.ndarray, torch.Tensor] (n,)
 
-# def calculate_stationary_observable(observable_by_state, pi):
-#     return torch.atleast_1d(pi.matmul(observable_by_state))
-#
-#
+    Returns
+    -------
+    Union[np.ndarray, torch.Tensor] (k,)
+
+    """
+    return stationary_distribution.matmul(torch.atleast_2d(a))
+
+
 # def calculate_observable_by_state(ftraj: np.ndarray, dtraj: np.ndarray) -> np.ndarray:
 #     """
 #     Calculate observable_by_state vector from feature trajectory
