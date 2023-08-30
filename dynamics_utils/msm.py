@@ -228,17 +228,57 @@ def normalize_in_range(vec: Union[np.ndarray, torch.Tensor],
     return (b - a) * ((vec - min) / (max - min)) + a
 
 
-# def is_stochastic(T):
-#     return torch.allclose(T.sum(axis=1), torch.ones(T.size()[0], dtype=torch.float64))
-#
-#
-# def is_valid(T):
-#     return torch.logical_not(torch.any(T < 0))
-#
-#
-# def is_reversible(T, pi):
-#     return torch.allclose(pi[:, None] * T, (pi[:, None] * T).T, rtol=1e-15)
-#
+def is_stochastic(transition_matrix: Union[np.ndarray, torch.Tensor],
+                  dtype: torch.dtype = torch.float64)\
+        -> bool:
+    """
+    Checks if matrix is stochastic
+    Parameters
+    ----------
+    transition_matrix:  Union[np.ndarray, torch.Tensor]
+        transition matrix
+    dtype:  torch.dtype, default=torch.float64
+        dtype
+
+    Returns
+    -------
+    bool
+
+    """
+    return torch.allclose(transition_matrix.sum(axis=1), torch.ones(transition_matrix.size()[0], dtype=dtype))
+
+
+def is_valid(transition_matrix: Union[np.ndarray, torch.Tensor]):
+    """
+    Checks if matrix is valid
+    Parameters
+    ----------
+    transition_matrix:  Union[np.ndarray, torch.Tensor]
+
+    Returns
+    -------
+    bool
+    """
+    return torch.logical_not(torch.any(transition_matrix < 0))
+
+
+def is_reversible(transition_matrix: Union[np.ndarray, torch.Tensor],
+                  stationary_distribution: Union[np.ndarray, torch.Tensor])\
+        -> bool:
+    """
+    Checks if matrix is reversible
+    Parameters
+    ----------
+    transition_matrix:  Union[np.ndarray, torch.Tensor]
+    stationary_distribution:    Union[np.ndarray, torch.Tensor]
+
+    Returns
+    -------
+    bool
+
+    """
+    return torch.allclose(stationary_distribution[:, None] * transition_matrix, (stationary_distribution[:, None] * transition_matrix).T, rtol=1e-15)
+
 #
 # def eigendecomposition(a, renormalise=False):
 #     n_states = a.size()[0]
