@@ -522,33 +522,37 @@ def calculate_mfpt(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.m
     return mfpt
 
 
-# def calculate_mfpt_rates(transition_matrix: Union[torch.Tensor, deeptime.markov.msm.MarkovStateModel],
-#                          pcca_assignments: torch.Tensor, n_metastable_states: int, lagtime: float = 1.0):
-#     """
-#     Calculates the mean first passage time rates
-#
-#     Parameters
-#     ----------
-#     transition_matrix:      Union[torch.Tensor, deeptime.markov.msm.MarkovStateModel]
-#                             Transition matrix
-#     pcca_assignments:       torch.Tensor
-#                             PCCA object
-#     n_metastable_states:    int
-#                             Number of metastable states
-#     lagtime:                float, default = 1
-#                             Lagtime
-#
-#     Returns
-#     -------
-#     mfpt_rates:             torch.Tensor
-#                             Mean first passage time rates
-#     """
-#     mfpt = calculate_mfpt(transition_matrix, pcca_assignments, n_metastable_states, lagtime)
-#     imfpt = torch.zeros_like(mfpt)
-#     a, b = torch.nonzero(mfpt).T
-#     imfpt[a, b] = 1 / mfpt[a, b]
-#     return imfpt
-#
+@ensure_tensor
+def calculate_mfpt_rates(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.markov.msm.MarkovStateModel],
+                         pcca_assignments: torch.Tensor,
+                         lag: int = 1,
+                         dt_traj: float = 1.0)\
+        -> torch.Tensor:
+    """
+    Calculates the mean first passage time rates (inverse of MFPT)
+
+    Parameters
+    ----------
+    transition_matrix:  Union[torch.Tensor, np.ndarray, deeptime.markov.msm.MarkovStateModel]
+        transition matrix
+    pcca_assignments:   Union[torch.Tensor, np.ndarray]
+        PCCA object
+    lag:    float, default = 1
+        lag time
+    dt_traj:    float, default = 1.0
+        trajectory timestep
+
+    Returns
+    -------
+    mfpt_rates:   Union[torch.Tensor, np.ndarray]
+        Mean first passage time rates
+    """
+    mfpt = calculate_mfpt(transition_matrix, pcca_assignments, lag, dt_traj)
+    imfpt = torch.zeros_like(mfpt)
+    a, b = torch.nonzero(mfpt).T
+    imfpt[a, b] = 1 / mfpt[a, b]
+    return imfpt
+
 #
 # def calculate_delta_g(stationary_distribution: torch.Tensor, barrier_state: int):
 #     return - torch.log(stationary_distribution[:barrier_state].sum() / stationary_distribution[barrier_state:].sum())
