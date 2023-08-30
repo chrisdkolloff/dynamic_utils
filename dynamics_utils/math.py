@@ -7,15 +7,15 @@ from .utils.decorators import ensure_tensor
 
 
 @ensure_tensor
-def random_float_between_interval(r1: Union[int, float], r2: Union[int, float], shape1: int = 1, shape2: int = 1)\
+def random_float_between_interval(a: Union[int, float], b: Union[int, float], shape1: int = 1, shape2: int = 1)\
         -> torch.Tensor:
     """
     Generates random float on the interval [r1, r2]
     Parameters
     ----------
-    r1:     Union[int, float]
+    a:     Union[int, float]
         lower bound
-    r2:     Union[int, float]
+    b:     Union[int, float]
         upper bound
     shape1: int, default=1
         shape of first dimension
@@ -27,7 +27,7 @@ def random_float_between_interval(r1: Union[int, float], r2: Union[int, float], 
     torch.Tensor, (shape1, shape2)
 
     """
-    return (r1 - r2) * torch.rand(shape1, shape2) + r2
+    return (a - b) * torch.rand(shape1, shape2) + b
 
 
 @ensure_tensor
