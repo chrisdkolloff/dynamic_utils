@@ -199,13 +199,34 @@ def calculate_acf_from_spectral_components(k: Union[np.ndarray, torch.Tensor],
     amplitudes_stationary = amplitudes_from_observables(a, stationary_distribution)
     acf = amplitudes_stationary.T + torch.matmul((eigvals[:n_components, None] ** (k * lag * dt_traj)).T, (amplitudes_dynamic).T)
     return acf.T
-#
-# @ensure_tensor
-# def normalize_in_range(vec, a=-1, b=1, axis=1):
-#     max = torch.max(vec, dim=axis)[0]
-#     min = torch.min(vec, dim=axis)[0]
-#     return (b - a) * ((vec - min) / (max - min)) + a
-#
+
+@ensure_tensor
+def normalize_in_range(vec: Union[np.ndarray, torch.Tensor],
+                       a: Union[int, float] = -1,
+                       b: Union[int, float] = 1,
+                       axis: int = 1)\
+        -> Union[np.ndarray, torch.Tensor]:
+    """
+    Normalizes vector in range [a, b]
+    Parameters
+    ----------
+    vec:    Union[np.ndarray, torch.Tensor]
+        vector
+    a:      Union[int, float], default=-1
+        lower bound
+    b:      Union[int, float], default=1
+        upper bound
+    axis:   int, default=1
+        axis to normalize over
+
+    Returns
+    -------
+    Union[np.ndarray, torch.Tensor]
+    """
+    max = torch.max(vec, dim=axis)[0]
+    min = torch.min(vec, dim=axis)[0]
+    return (b - a) * ((vec - min) / (max - min)) + a
+
 
 # def is_stochastic(T):
 #     return torch.allclose(T.sum(axis=1), torch.ones(T.size()[0], dtype=torch.float64))
