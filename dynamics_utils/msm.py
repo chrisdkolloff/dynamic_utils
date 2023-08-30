@@ -2,6 +2,7 @@ from typing import Union, Tuple
 
 import numpy as np
 import torch
+import deeptime
 from deeptime.markov.tools.analysis import rdl_decomposition
 from deeptime.markov import pcca
 
@@ -484,37 +485,43 @@ def calculate_metastable_trajectory(pcca: pcca, dtraj: Union[np.ndarray, torch.T
     """
     return torch.tensor(pcca.assignments[dtraj])
 
-#
-# def calculate_mfpt(transition_matrix: Union[torch.Tensor, deeptime.markov.msm.MarkovStateModel],
-#                    pcca_assignments: torch.Tensor, n_metastable_states: int, lagtime: float = 1.0):
-#     """
-#     Calculates the mean first passage time matrix
-#
-#     Parameters
-#     ----------
-#     transition_matrix:      Union[torch.Tensor, deeptime.markov.msm.MarkovStateModel]
-#                             Transition matrix
-#     pcca_assignments:       torch.Tensor
-#                             PCCA object
-#     n_metastable_states:    int
-#                             Number of metastable states
-#     lagtime:                float, default = 1
-#                             Lagtime
-#
-#     Returns
-#     -------
-#     mfpt:                   torch.Tensor
-#                             Mean first passage time matrix
-#     """
-#     if isinstance(transition_matrix, torch.Tensor):
-#         transition_matrix = deeptime.markov.msm.MarkovStateModel(transition_matrix.numpy(), lagtime=lagtime)
-#
-#     mfpt = torch.zeros((n_metastable_states, n_metastable_states))
-#     for i in range(n_metastable_states):
-#         for j in range(n_metastable_states):
-#             mfpt[i, j] = transition_matrix.mfpt(np.where(pcca_assignments == i)[0], np.where(pcca_assignments == j)[0])
-#     return mfpt
-#
+
+@ensure_tensor
+def calculate_mfpt(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.markov.msm.MarkovStateModel],
+                   pcca_assignments: Union[torch.Tensor, np.ndarray],
+                   lag: float = 1,
+                   dt_traj: float = 1.0)\
+        -> Union[torch.Tensor, np.ndarray]:
+    """
+    Calculates the mean first passage time matrix
+
+    Parameters
+    ----------
+    transition_matrix:  Union[torch.Tensor, np.ndarray, deeptime.markov.msm.MarkovStateModel]
+        transition matrix
+    pcca_assignments:   Union[torch.Tensor, np.ndarray]
+        PCCA object
+    lag:    float, default = 1
+        lag time
+    dt_traj:    float, default = 1.0
+        trajectory timestep
+
+    Returns
+    -------
+    mfpt:   Union[torch.Tensor, np.ndarray]
+        Mean first passage time matrix
+    """
+    if isinstance(transition_matrix, torch.Tensor):
+        transition_matrix = deeptime.markov.msm.MarkovStateModel(transition_matrix.numpy(), lagtime=lag * dt_traj)
+
+    n_metastable_states = len(torch.unique(pcca_assignments))
+    mfpt = torch.zeros((n_metastable_states, n_metastable_states))
+    for i in range(n_metastable_states):
+        for j in range(n_metastable_states):
+            mfpt[i, j] = transition_matrix.mfpt(np.where(pcca_assignments == i)[0], np.where(pcca_assignments == j)[0])
+    return mfpt
+
+
 # def calculate_mfpt_rates(transition_matrix: Union[torch.Tensor, deeptime.markov.msm.MarkovStateModel],
 #                          pcca_assignments: torch.Tensor, n_metastable_states: int, lagtime: float = 1.0):
 #     """
