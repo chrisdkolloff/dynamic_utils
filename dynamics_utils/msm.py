@@ -2,6 +2,7 @@ from typing import Union, Tuple
 
 import numpy as np
 import torch
+from deeptime.markov import rdl_decomposition
 
 from .utils.decorators import ensure_tensor
 from .utils.torch_utils import matrix_power
@@ -279,23 +280,39 @@ def is_reversible(transition_matrix: Union[np.ndarray, torch.Tensor],
     """
     return torch.allclose(stationary_distribution[:, None] * transition_matrix, (stationary_distribution[:, None] * transition_matrix).T, rtol=1e-15)
 
-#
-# def eigendecomposition(a, renormalise=False):
-#     n_states = a.size()[0]
-#     if renormalise:
-#         a /= a.sum(axis=1, keepdims=True)
-#     try:
-#         r, d, l = rdl_decomposition(a)
-#     except:
-#         r, d, l = rdl_decomposition(a.to(torch.float16))
-#     d = torch.diag(torch.from_numpy(d.real))[1:]
-#     d = d.to(torch.float64)
-#     l = torch.from_numpy(l.T)
-#     r = torch.from_numpy(r)
-#     pi = l[:, 0]
-#     return r, d, pi
-#
-#
+@ensure_tensor
+def eigendecomposition(transition_matrix: Union[np.ndarray, torch.Tensor],
+                       renormalise: bool = False):
+    """
+    Calculates the eigendecomposition of the transition matrix
+    Parameters
+    ----------
+    transition_matrix:  Union[np.ndarray, torch.Tensor]
+        transition matrix
+    renormalise:    bool, default=False
+        renormalise transition matrix
+
+    Returns
+    -------
+    reigvecs:   Union[np.ndarray, torch.Tensor]
+        right eigenvectors
+    eigvals:    Union[np.ndarray, torch.Tensor]
+        eigenvalues
+    stationary_distribution:    Union[np.ndarray, torch.Tensor]
+        stationary distribution
+
+    """
+    if renormalise:
+        transition_matrix /= transition_matrix.sum(axis=1, keepdims=True)
+    r, d, l = rdl_decomposition(transition_matrix)
+    eigvals = torch.diag(torch.from_numpy(d.real))[1:]
+    eigvals = eigvals.to(torch.float64)
+    leigvecs = torch.from_numpy(l.T)
+    reigvecs = torch.from_numpy(r)
+    stationary_distribution = leigvecs[:, 0]
+    return reigvecs, eigvals, stationary_distribution
+
+
 # def rdl_recomposition(reigvecs: torch.Tensor, eigvals: torch.Tensor, leigvecs: torch.Tensor):
 #     """
 #     Calculate T = reigvecs * diag(eigvals) * leigvecs.T through RDL recomposition
