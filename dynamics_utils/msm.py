@@ -399,27 +399,29 @@ def calculate_stationary_observable(a: Union[np.ndarray, torch.Tensor],
     return stationary_distribution.matmul(torch.atleast_2d(a))
 
 
-# def calculate_observable_by_state(ftraj: np.ndarray, dtraj: np.ndarray) -> np.ndarray:
-#     """
-#     Calculate observable_by_state vector from feature trajectory
-#
-#     Parameters
-#     ----------
-#     ftraj:  np.ndarray
-#             Feature trajectory
-#     dtraj:  np.ndarray
-#             Discrete trajectory
-#
-#     Returns
-#     -------
-#     observable_by_state:    np.ndarray
-#                             mean value of feature trajectory in that particular state
-#     """
-#     assert len(ftraj) == len(dtraj)
-#
-#     return np.array([ftraj[dtraj == i].mean() for i in np.unique(dtraj)])
-#
-#
+@ensure_tensor
+def calculate_average_observable_per_state(ftraj: Union[np.ndarray, torch.Tensor],
+                                           dtraj: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
+    """
+    Calculate average observable per state from feature trajectory
+
+    Parameters
+    ----------
+    ftraj:  Union[np.ndarray, torch.Tensor]
+        feature trajectory
+    dtraj:  Union[np.ndarray, torch.Tensor]
+        discrete trajectory
+
+    Returns
+    -------
+    a:    Union[np.ndarray, torch.Tensor]
+        mean value of feature trajectory in that particular state
+    """
+    assert len(ftraj) == len(dtraj)
+
+    return torch.tensor([ftraj[dtraj == i].mean() for i in torch.unique(dtraj)])
+
+
 # def random_between_interval(r1, r2, shape1=1, shape2=1):
 #     return (r1 - r2) * torch.rand(shape1, shape2) + r2
 #
