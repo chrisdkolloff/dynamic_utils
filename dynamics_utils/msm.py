@@ -358,10 +358,27 @@ def row_normalise(tensor: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, 
     """
     return tensor / tensor.sum(axis=1, keepdims=True)
 
-#
-# def calculate_leigvecs(pi, reigvecs):
-#     return torch.diag(pi).mm(reigvecs)
-#
+
+@ensure_tensor
+def calculate_leigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
+                       reigvecs: Union[np.ndarray, torch.Tensor]):
+    """
+    Calculates the left eigenvectors from the right eigenvectors and the stationary distribution
+    Parameters
+    ----------
+    stationary_distribution:   Union[np.ndarray, torch.Tensor]
+        stationary distribution
+    reigvecs:   Union[np.ndarray, torch.Tensor]
+        right eigenvectors
+
+    Returns
+    -------
+    leigvecs:   Union[np.ndarray, torch.Tensor]
+        left eigenvectors
+
+    """
+    return torch.diag(stationary_distribution).mm(reigvecs)
+
 
 # def calculate_stationary_observable(observable_by_state, pi):
 #     return torch.atleast_1d(pi.matmul(observable_by_state))
