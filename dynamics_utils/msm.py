@@ -133,41 +133,6 @@ def calculate_acf_from_trajectory(traj: Union[np.ndarray, torch.Tensor]) -> Unio
     return acf
 
 
-def calculate_acf_from_spectral_components(k: Union[np.ndarray, torch.Tensor],
-                                           a: Union[np.ndarray, torch.Tensor],
-                                           stationary_distribution: Union[np.ndarray, torch.Tensor],
-                                           eigvals: Union[np.ndarray, torch.Tensor],
-                                           leigvecs: Union[np.ndarray, torch.Tensor])\
-        -> Union[np.ndarray, torch.Tensor]:
-    """
-    E[o(tau)o(t+ktau)] = (a stationary_distribution) ** 2 + sum_{i=2}((lambda_i**k)(a l_i) **2)
-
-    Parameters
-    ----------
-    k:          Union[np.ndarray, torch.Tensor], shape (k, )
-        lag times
-
-    a:        Union[np.ndarray, torch.Tensor], shape (n, )
-        average observable per state
-
-    stationary_distribution:    Union[np.ndarray, torch.Tensor], shape (n, )
-
-    eigvals:   Union[np.ndarray, torch.Tensor], shape (n, )
-        eigenvalues
-
-    leigvecs:  Union[np.ndarray, torch.Tensor], shape (n, n)
-        left eigenvectors
-
-    Returns
-    -------
-    Union[np.ndarray, torch.Tensor], shape (k, )
-
-    """
-    return torch.mm(a, stationary_distribution).pow(2) + torch.mm((eigvals[:, None].pow(k)).t(),
-                                                                  torch.mm(a, leigvecs[:, 1:])).pow(2)
-
-
-
 def calculate_acf_from_transition_matrix(k: Union[np.ndarray, torch.Tensor],
                                          a: Union[np.ndarray, torch.Tensor],
                                          transition_matrix: Union[np.ndarray, torch.Tensor],
@@ -194,36 +159,39 @@ def calculate_acf_from_transition_matrix(k: Union[np.ndarray, torch.Tensor],
     """
     return torch.stack([torch.mm(torch.mm(a * stationary_distribution, matrix_power(transition_matrix, ki)), a) for ki in k])
 
-#
-# def acf(k: Union[np.ndarray, torch.Tensor],
-#         a: Union[np.ndarray, torch.Tensor],
-#         leigvecs: Union[np.ndarray, torch.Tensor],
-#         eigvals: Union[np.ndarray, torch.Tensor],
-#         lagtime: int = 1,
-#         dt_traj: float = 1.,
-#         n_components: int = 2):
-#     """
-#     Calculates the ACF from the spectral components
-#     Parameters
-#     ----------
-#     k
-#     a
-#     leigvecs
-#     eigvals
-#     lagtime
-#     dt_traj
-#     n_components
-#
-#     Returns
-#     -------
-#
-#     """
-#     stationary_distribution = leigvecs[:, 0]
-#     a = mean_center(torch.atleast_2d(a))
-#     amplitudes = torch.matmul(a, leigvecs[:, 1:])[:, :n_components]
-#     acf = (torch.matmul(a, stationary_distribution[:, None]) ** 2).T + \
-#           torch.matmul((eigvals[:n_components, None] ** (k * lagtime * dt_traj)).T, (amplitudes ** 2).T)
-#     return acf.T
+@ensure_tensor
+def calculate_acf_from_spectral_components(k: Union[np.ndarray, torch.Tensor],
+                                           a: Union[np.ndarray, torch.Tensor],
+                                           leigvecs: Union[np.ndarray, torch.Tensor],
+                                           eigvals: Union[np.ndarray, torch.Tensor],
+                                           lagtime: int = 1,
+                                           dt_traj: float = 1.,
+                                           n_components: int = None) \
+        -> Union[np.ndarray, torch.Tensor]:
+    """
+    Calculates the ACF from the spectral components
+        E[o(tau)o(t+ktau)] = (a stationary_distribution) ** 2 + sum_{i=2}((lambda_i**k)(a l_i) **2)
+
+    Parameters
+    ----------
+    k
+    a
+    leigvecs
+    eigvals
+    lagtime
+    dt_traj
+    n_components
+
+    Returns
+    -------
+
+    """
+    stationary_distribution = leigvecs[:, 0]
+    a = mean_center(torch.atleast_2d(a))
+    amplitudes_dynamic = amplitudes_from_observables(a, leigvecs[:, 1:])[:, :n_components]
+    amplitudes_stationary = amplitudes_from_observables(a, stationary_distribution)
+    acf = amplitudes_stationary.T + torch.matmul((eigvals[:n_components, None] ** (k * lagtime * dt_traj)).T, (amplitudes_dynamic).T)
+    return acf.T
 #
 #
 # def normalize_in_range(vec, a=-1, b=1, axis=1):
@@ -281,9 +249,9 @@ def calculate_acf_from_transition_matrix(k: Union[np.ndarray, torch.Tensor],
 #     return reigvecs.mm(eigvals).mm(leigvecs.T)
 #
 #
-# def mean_center(arr, axis=1, keepdims=True):
-#     #  mean centers nd-array
-#     return arr - arr.mean(axis=axis, keepdims=keepdims)
+def mean_center(arr, axis=1, keepdims=True):
+    #  mean centers nd-array
+    return arr - arr.mean(axis=axis, keepdims=keepdims)
 #
 #
 # def row_normalise(arr):
