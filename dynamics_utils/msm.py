@@ -422,25 +422,25 @@ def calculate_average_observable_per_state(ftraj: Union[np.ndarray, torch.Tensor
     return torch.tensor([ftraj[dtraj == i].mean() for i in torch.unique(dtraj)])
 
 
+@ensure_tensor
+def calculate_free_energy_potential(stationary_distribution: Union[np.ndarray, torch.Tensor], kT: float = 1.0):
+    """
+    Calculates the free energy potential as FEP = - log(pi)
 
-# def calculate_free_energy_potential(stationary_distribution: torch.Tensor, kT: float = 1.0):
-#     """
-#     Calculates the free energy potential as FEP = - log(pi)
-#
-#     Parameters
-#     ----------
-#     stationary_distribution:    torch.Tensor
-#                                 Stationary distribution
-#     kT:                         float, default = 1.0
-#                                 Boltzmann factor
-#
-#     Returns
-#     -------
-#     FEP:                        torch.Tensor
-#                                 Free energy
-#     """
-#     return - torch.log(stationary_distribution) * kT
-#
+    Parameters
+    ----------
+    stationary_distribution:    Union[np.ndarray, torch.Tensor]
+        stationary distribution
+    kT:     float, default = 1.0
+        Boltzmann factor
+
+    Returns
+    -------
+    Union[np.ndarray, torch.Tensor]
+        free energy potential
+    """
+    return - torch.log(stationary_distribution) * kT
+
 #
 # def calculate_metastable_decomposition(transition_matrix: torch.Tensor, n_metastable_states: int) -> object:
 #     """
