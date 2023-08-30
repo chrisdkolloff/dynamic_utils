@@ -164,7 +164,7 @@ def calculate_acf_from_spectral_components(k: Union[np.ndarray, torch.Tensor],
                                            a: Union[np.ndarray, torch.Tensor],
                                            leigvecs: Union[np.ndarray, torch.Tensor],
                                            eigvals: Union[np.ndarray, torch.Tensor],
-                                           lagtime: int = 1,
+                                           lag: int = 1,
                                            dt_traj: float = 1.,
                                            n_components: int = None) \
         -> Union[np.ndarray, torch.Tensor]:
@@ -174,32 +174,39 @@ def calculate_acf_from_spectral_components(k: Union[np.ndarray, torch.Tensor],
 
     Parameters
     ----------
-    k
-    a
-    leigvecs
-    eigvals
-    lagtime
-    dt_traj
-    n_components
+    k:          Union[np.ndarray, torch.Tensor], shape (k, )
+        lag times
+    a:          Union[np.ndarray, torch.Tensor], shape (n, )
+        average observable per state
+    leigvecs:   Union[np.ndarray, torch.Tensor], shape (n, n)
+        left eigenvectors
+    eigvals:    Union[np.ndarray, torch.Tensor], shape (n, )
+        eigenvalues
+    lag:    int, default=1
+        lag time
+    dt_traj:    float, default=1.
+        trajectory timestep
+    n_components:   int, default=None
+        number of components to use
 
     Returns
     -------
-
+    Union[np.ndarray, torch.Tensor], shape (k, )
     """
     stationary_distribution = leigvecs[:, 0]
     a = mean_center(torch.atleast_2d(a))
     amplitudes_dynamic = amplitudes_from_observables(a, leigvecs[:, 1:])[:, :n_components]
     amplitudes_stationary = amplitudes_from_observables(a, stationary_distribution)
-    acf = amplitudes_stationary.T + torch.matmul((eigvals[:n_components, None] ** (k * lagtime * dt_traj)).T, (amplitudes_dynamic).T)
+    acf = amplitudes_stationary.T + torch.matmul((eigvals[:n_components, None] ** (k * lag * dt_traj)).T, (amplitudes_dynamic).T)
     return acf.T
 #
-#
+# @ensure_tensor
 # def normalize_in_range(vec, a=-1, b=1, axis=1):
 #     max = torch.max(vec, dim=axis)[0]
 #     min = torch.min(vec, dim=axis)[0]
 #     return (b - a) * ((vec - min) / (max - min)) + a
 #
-#
+
 # def is_stochastic(T):
 #     return torch.allclose(T.sum(axis=1), torch.ones(T.size()[0], dtype=torch.float64))
 #
