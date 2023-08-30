@@ -422,10 +422,7 @@ def calculate_average_observable_per_state(ftraj: Union[np.ndarray, torch.Tensor
     return torch.tensor([ftraj[dtraj == i].mean() for i in torch.unique(dtraj)])
 
 
-# def random_between_interval(r1, r2, shape1=1, shape2=1):
-#     return (r1 - r2) * torch.rand(shape1, shape2) + r2
-#
-#
+
 # def scale_to_range(arr: torch.Tensor, a: Union[float, int], b: Union[float, int], axis=0):
 #     """
 #     Scales tensor to range between [a, b]
