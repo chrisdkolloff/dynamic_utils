@@ -79,7 +79,7 @@ def fingerprint_correlation(reigvecs: Union[np.ndarray, torch.Tensor],
                             b: Union[np.ndarray, torch.Tensor, None] = None,
                             lag: int = 1,
                             dt_traj: float = 1.)\
-        -> Tuple[Union[np.ndarray, torch.Tensor], : Union[np.ndarray, torch.Tensor]]:
+        -> Tuple[Union[np.ndarray, torch.Tensor], Union[np.ndarray, torch.Tensor]]:
     """
     Convenience function to calculate fingerprint correlation from eigenvalues and eigenvectors
     # TODO: remove reigvecs and use leigvecs instead
