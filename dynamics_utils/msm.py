@@ -3,6 +3,7 @@ from typing import Union, Tuple
 import numpy as np
 import torch
 from deeptime.markov.tools.analysis import rdl_decomposition
+from deeptime.markov import pcca
 
 from .utils.decorators import ensure_tensor
 from .utils.torch_utils import matrix_power
@@ -441,26 +442,29 @@ def calculate_free_energy_potential(stationary_distribution: Union[np.ndarray, t
     """
     return - torch.log(stationary_distribution) * kT
 
-#
-# def calculate_metastable_decomposition(transition_matrix: torch.Tensor, n_metastable_states: int) -> object:
-#     """
-#     Calculates the metastable decomposition of the transition matrix
-#
-#     Parameters
-#     ----------
-#     transition_matrix:          torch.Tensor
-#                                 Transition matrix
-#     n_metastable_states:        int
-#                                 Number of metastable states
-#
-#     Returns
-#     -------
-#     pcca:                       deeptime.markov.pcca object
-#                                 PCCA object
-#     """
-#     return pcca(transition_matrix.numpy(), n_metastable_states)
-#
-#
+
+@ensure_tensor
+def calculate_metastable_decomposition(transition_matrix: Union[np.ndarray, torch.Tensor],
+                                       n_metastable_states: int) \
+        -> object:
+    """
+    Calculates the metastable decomposition of the transition matrix
+
+    Parameters
+    ----------
+    transition_matrix:  Union[np.ndarray, torch.Tensor]
+        transition matrix
+    n_metastable_states:    int
+        number of metastable states
+
+    Returns
+    -------
+    pcca:                       deeptime.markov.pcca object
+                                PCCA object
+    """
+    return pcca(transition_matrix.numpy(), n_metastable_states)
+
+
 # def calculate_metastable_trajectory(pcca: pcca, dtraj: torch.Tensor):
 #     """
 #     Calculates the metastable trajectory from the PCCA object and the discrete trajectory
