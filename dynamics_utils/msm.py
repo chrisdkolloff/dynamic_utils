@@ -132,7 +132,7 @@ def calculate_acf_from_trajectory(traj: Union[np.ndarray, torch.Tensor]) -> Unio
     acf = torch.nn.functional.conv1d(traj, traj)[len(traj[:]):]
     return acf
 
-
+@ensure_tensor
 def calculate_acf_from_transition_matrix(k: Union[np.ndarray, torch.Tensor],
                                          a: Union[np.ndarray, torch.Tensor],
                                          transition_matrix: Union[np.ndarray, torch.Tensor],
