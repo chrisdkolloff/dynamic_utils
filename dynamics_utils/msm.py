@@ -313,27 +313,31 @@ def eigendecomposition(transition_matrix: Union[np.ndarray, torch.Tensor],
     return reigvecs, eigvals, stationary_distribution
 
 
-# def rdl_recomposition(reigvecs: torch.Tensor, eigvals: torch.Tensor, leigvecs: torch.Tensor):
-#     """
-#     Calculate T = reigvecs * diag(eigvals) * leigvecs.T through RDL recomposition
-#
-#     Parameters
-#     ----------
-#     reigvecs:   (n, n) torch.Tensor
-#                 Right eigenvectors
-#     eigvals:    (n,) torch.Tensor
-#                 Eigenvalues
-#     leigvecs:   (n, n) torch.Tensor
-#                 Left eigenvectors
-#
-#     Returns
-#     -------
-#     T           (n, n) torch.Tensor
-#                 Transition matrix
-#     """
-#     return reigvecs.mm(eigvals).mm(leigvecs.T)
-#
-#
+@ensure_tensor
+def rdl_recomposition(reigvecs: Union[np.ndarray, torch.Tensor],
+                      eigvals: Union[np.ndarray, torch.Tensor],
+                      leigvecs: Union[np.ndarray, torch.Tensor])\
+        -> Union[np.ndarray, torch.Tensor]:
+    """
+    Calculate T = reigvecs * diag(eigvals) * leigvecs.T through RDL recomposition
+
+    Parameters
+    ----------
+    reigvecs:   Union[np.ndarray, torch.Tensor] (n, n)
+            right eigenvectors
+    eigvals:    Union[np.ndarray, torch.Tensor] (n,)
+            eigenvalues
+    leigvecs:   Union[np.ndarray, torch.Tensor] (n, n)
+            left eigenvectors
+
+    Returns
+    -------
+    transition_matrix:  Union[np.ndarray, torch.Tensor] (n, n)
+            transition matrix
+    """
+    return reigvecs.mm(eigvals).mm(leigvecs.T)
+
+
 def mean_center(arr, axis=1, keepdims=True):
     #  mean centers nd-array
     return arr - arr.mean(axis=axis, keepdims=keepdims)
