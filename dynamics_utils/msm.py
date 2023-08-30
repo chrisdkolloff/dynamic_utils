@@ -524,7 +524,7 @@ def calculate_mfpt(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.m
 
 @ensure_tensor
 def calculate_mfpt_rates(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.markov.msm.MarkovStateModel],
-                         pcca_assignments: torch.Tensor,
+                         pcca_assignments: Union[torch.Tensor, np.ndarray],
                          lag: int = 1,
                          dt_traj: float = 1.0)\
         -> torch.Tensor:
@@ -553,6 +553,22 @@ def calculate_mfpt_rates(transition_matrix: Union[torch.Tensor, np.ndarray, deep
     imfpt[a, b] = 1 / mfpt[a, b]
     return imfpt
 
-#
-# def calculate_delta_g(stationary_distribution: torch.Tensor, barrier_state: int):
-#     return - torch.log(stationary_distribution[:barrier_state].sum() / stationary_distribution[barrier_state:].sum())
+
+@ensure_tensor
+def calculate_delta_G_1D(stationary_distribution: Union[torch.Tensor, np.ndarray],
+                         barrier_state: int)\
+        -> float:
+    """
+    Calculates the free energy difference between two states in a 1D system
+    Parameters
+    ----------
+    stationary_distribution:    Union[torch.Tensor, np.ndarray]
+        stationary distribution
+    barrier_state:  int
+        index of barrier state
+
+    Returns
+    -------
+    float
+    """
+    return - torch.log(stationary_distribution[:barrier_state].sum() / stationary_distribution[barrier_state:].sum())
