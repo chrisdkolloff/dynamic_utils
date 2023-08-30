@@ -423,24 +423,6 @@ def calculate_average_observable_per_state(ftraj: Union[np.ndarray, torch.Tensor
 
 
 
-# def scale_to_range(arr: torch.Tensor, a: Union[float, int], b: Union[float, int], axis=0):
-#     """
-#     Scales tensor to range between [a, b]
-#     Parameters
-#     ----------
-#     arr
-#     a
-#     b
-#
-#     Returns
-#     -------
-#
-#     """
-#     min = torch.min(arr, dim=axis)[0]
-#     max = torch.max(arr, dim=axis)[0]
-#     return (b - a) * (arr - min) / (max - min) + a
-#
-#
 # def calculate_free_energy_potential(stationary_distribution: torch.Tensor, kT: float = 1.0):
 #     """
 #     Calculates the free energy potential as FEP = - log(pi)
