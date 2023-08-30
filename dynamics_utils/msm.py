@@ -303,7 +303,7 @@ def eigendecomposition(transition_matrix: Union[np.ndarray, torch.Tensor],
 
     """
     if renormalise:
-        transition_matrix /= transition_matrix.sum(axis=1, keepdims=True)
+        transition_matrix = row_normalise(transition_matrix)
     r, d, l = rdl_decomposition(transition_matrix)
     eigvals = torch.diag(torch.from_numpy(d.real))[1:]
     eigvals = eigvals.to(torch.float64)
@@ -337,20 +337,32 @@ def rdl_recomposition(reigvecs: Union[np.ndarray, torch.Tensor],
     """
     return reigvecs.mm(eigvals).mm(leigvecs.T)
 
-
+@ensure_tensor
 def mean_center(arr, axis=1, keepdims=True):
     #  mean centers nd-array
     return arr - arr.mean(axis=axis, keepdims=keepdims)
-#
-#
-# def row_normalise(arr):
-#     return arr / arr.sum(axis=1, keepdims=True)
-#
+
+@ensure_tensor
+def row_normalise(tensor: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
+    """
+    Row normalises matrix
+    Parameters
+    ----------
+    tensor:    Union[np.ndarray, torch.Tensor]
+        tensor
+
+    Returns
+    -------
+    Union[np.ndarray, torch.Tensor]
+
+    """
+    return tensor / tensor.sum(axis=1, keepdims=True)
+
 #
 # def calculate_leigvecs(pi, reigvecs):
 #     return torch.diag(pi).mm(reigvecs)
 #
-#
+
 # def calculate_stationary_observable(observable_by_state, pi):
 #     return torch.atleast_1d(pi.matmul(observable_by_state))
 #
