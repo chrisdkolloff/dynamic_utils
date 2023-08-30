@@ -9,7 +9,7 @@ setup(
     version='0.0',
     packages=find_packages(),
     install_requires=[
-        'numpy', 'torch'
+        'numpy', 'torch', 'deeptime'
     ],
     py_modules=['dynamics_utils'],
 )
