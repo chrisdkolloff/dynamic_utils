@@ -446,7 +446,7 @@ def calculate_free_energy_potential(stationary_distribution: Union[np.ndarray, t
 @ensure_tensor
 def calculate_metastable_decomposition(transition_matrix: Union[np.ndarray, torch.Tensor],
                                        n_metastable_states: int) \
-        -> object:
+        -> pcca:
     """
     Calculates the metastable decomposition of the transition matrix
 
@@ -465,23 +465,25 @@ def calculate_metastable_decomposition(transition_matrix: Union[np.ndarray, torc
     return pcca(transition_matrix.numpy(), n_metastable_states)
 
 
-# def calculate_metastable_trajectory(pcca: pcca, dtraj: torch.Tensor):
-#     """
-#     Calculates the metastable trajectory from the PCCA object and the discrete trajectory
-#
-#     Parameters
-#     ----------
-#     pcca:           deeptime.markov.pcca object
-#                     PCCA object
-#     dtraj:          np.ndarray
-#                     Discrete trajectory
-#
-#     Returns
-#     -------
-#     metastable_traj:    torch.Tensor
-#                         Metastable trajectory
-#     """
-#     return torch.tensor(pcca.assignments[dtraj])
+@ensure_tensor
+def calculate_metastable_trajectory(pcca: pcca, dtraj: Union[np.ndarray, torch.Tensor]):
+    """
+    Calculates the metastable trajectory from the PCCA object and the discrete trajectory
+
+    Parameters
+    ----------
+    pcca:   deeptime.markov.pcca object
+        PCCA object
+    dtraj:  Union[np.ndarray, torch.Tensor]
+        discrete trajectory
+
+    Returns
+    -------
+    Union[np.ndarray, torch.Tensor]
+        metastable trajectory
+    """
+    return torch.tensor(pcca.assignments[dtraj])
+
 #
 # def calculate_mfpt(transition_matrix: Union[torch.Tensor, deeptime.markov.msm.MarkovStateModel],
 #                    pcca_assignments: torch.Tensor, n_metastable_states: int, lagtime: float = 1.0):
