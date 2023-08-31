@@ -106,6 +106,10 @@ def fingerprint_correlation(reigvecs: Union[np.ndarray, torch.Tensor],
 
     Returns
     -------
+    Union[np.ndarray, torch.Tensor]
+        timescales
+    Union[np.ndarray, torch.Tensor]
+        amplitudes
 
     """
     if b is None:
@@ -127,7 +131,7 @@ def calculate_acf_from_trajectory(traj: Union[np.ndarray, torch.Tensor]) -> Unio
 
     Returns
     -------
-    acf:    np.ndarray
+    Union[np.ndarray, torch.Tensor]
         autocorrelation function
 
     """
@@ -220,11 +224,11 @@ def eigendecomposition(transition_matrix: Union[np.ndarray, torch.Tensor],
 
     Returns
     -------
-    reigvecs:   Union[np.ndarray, torch.Tensor]
+    Union[np.ndarray, torch.Tensor]
         right eigenvectors
-    eigvals:    Union[np.ndarray, torch.Tensor]
+    Union[np.ndarray, torch.Tensor]
         eigenvalues
-    stationary_distribution:    Union[np.ndarray, torch.Tensor]
+    Union[np.ndarray, torch.Tensor]
         stationary distribution
 
     """
@@ -258,7 +262,7 @@ def rdl_recomposition(reigvecs: Union[np.ndarray, torch.Tensor],
 
     Returns
     -------
-    transition_matrix:  Union[np.ndarray, torch.Tensor] (n, n)
+    Union[np.ndarray, torch.Tensor] (n, n)
             transition matrix
     """
     return reigvecs.mm(eigvals).mm(leigvecs.T)
@@ -283,7 +287,8 @@ def row_normalise(tensor: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, 
 
 @ensure_tensor
 def calculate_leigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
-                       reigvecs: Union[np.ndarray, torch.Tensor]):
+                       reigvecs: Union[np.ndarray, torch.Tensor])\
+        -> Union[np.ndarray, torch.Tensor]:
     """
     Calculates the left eigenvectors from the right eigenvectors and the stationary distribution
     Parameters
@@ -295,7 +300,7 @@ def calculate_leigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
 
     Returns
     -------
-    leigvecs:   Union[np.ndarray, torch.Tensor]
+    Union[np.ndarray, torch.Tensor]
         left eigenvectors
 
     """
@@ -381,8 +386,8 @@ def calculate_metastable_decomposition(transition_matrix: Union[np.ndarray, torc
 
     Returns
     -------
-    pcca:                       deeptime.markov.pcca object
-                                PCCA object
+    deeptime.markov.pcca object
+            PCCA object
     """
     return pcca(transition_matrix.numpy(), n_metastable_states)
 
@@ -429,7 +434,7 @@ def calculate_mfpt(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.m
 
     Returns
     -------
-    mfpt:   Union[torch.Tensor, np.ndarray]
+    Union[torch.Tensor, np.ndarray]
         Mean first passage time matrix
     """
     if isinstance(transition_matrix, torch.Tensor):
@@ -465,7 +470,7 @@ def calculate_mfpt_rates(transition_matrix: Union[torch.Tensor, np.ndarray, deep
 
     Returns
     -------
-    mfpt_rates:   Union[torch.Tensor, np.ndarray]
+    Union[torch.Tensor, np.ndarray]
         Mean first passage time rates
     """
     mfpt = calculate_mfpt(transition_matrix, pcca_assignments, lag, dt_traj)
