@@ -34,7 +34,7 @@ class HDFReader:
             Data from the requested dataset.
         """
         if dataset_name in self.keys:
-            return torch.tensor(self.data[dataset_name][()])
+            return self.data[dataset_name][()]
         else:
             raise KeyError(f"Dataset '{dataset_name}' not found in the file.")
 
