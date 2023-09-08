@@ -149,3 +149,21 @@ def is_reversible(transition_matrix: Union[np.ndarray, torch.Tensor],
 def mean_center(arr, axis=1, keepdims=True):
     #  mean centers nd-array
     return arr - arr.mean(axis=axis, keepdims=keepdims)
+
+
+@ensure_tensor
+def is_orthonormal(tensor: Union[np.ndarray, torch.Tensor], rtol: float = 1e-05) -> bool:
+    """
+    Checks if matrix is orthonormal
+    Parameters
+    ----------
+    tensor: Union[np.ndarray, torch.Tensor]
+        matrix
+    rtol:   float, default=1e-05
+        relative tolerance
+
+    Returns
+    -------
+    bool
+    """
+    return torch.allclose(tensor.mm(tensor.T), torch.eye(tensor.size()[0]), rtol=rtol)
