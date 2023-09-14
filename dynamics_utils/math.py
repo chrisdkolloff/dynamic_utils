@@ -167,3 +167,24 @@ def is_orthonormal(tensor: Union[np.ndarray, torch.Tensor], rtol: float = 1e-05)
     bool
     """
     return torch.allclose(tensor.mm(tensor.T), torch.eye(tensor.size()[0]), rtol=rtol)
+
+
+@ensure_tensor
+def mask_tensor(tensor: Union[np.ndarray, torch.Tensor], condition: float = 0.0, eps: float = 1e-10) -> torch.Tensor:
+    """
+    Masks tensor
+    Parameters
+    ----------
+    tensor: Union[np.ndarray, torch.Tensor]
+        tensor to be masked
+    condition:  float, default=0.0
+        condition to mask
+    eps:    float, default=1e-10
+        epsilon
+
+    Returns
+    -------
+    torch.Tensor
+
+    """
+    return torch.where(tensor == condition, torch.tensor([eps], dtype=tensor.dtype), tensor)
