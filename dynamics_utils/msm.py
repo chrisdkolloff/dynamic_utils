@@ -308,6 +308,29 @@ def calculate_leigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
 
 
 @ensure_tensor
+def calculate_reigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
+                       orthonormal_reigvecs: Union[np.ndarray, torch.Tensor])\
+        -> Union[np.ndarray, torch.Tensor]:
+    """
+    Calculates the right eigenvectors from the orthonormal right eigenvectors and the stationary distribution
+    Parameters
+    ----------
+    stationary_distribution:   Union[np.ndarray, torch.Tensor]
+        stationary distribution
+    orthonormal_reigvecs:   Union[np.ndarray, torch.Tensor]
+        right eigenvectors
+
+    Returns
+    -------
+    Union[np.ndarray, torch.Tensor]
+        left eigenvectors
+
+    """
+    n = stationary_distribution.size()[0]
+    reigvecs = orthonormal_reigvecs / torch.sqrt(stationary_distribution)[:, None]
+    return torch.hstack([torch.ones(n, 1), reigvecs[:, 1:]])
+
+@ensure_tensor
 def calculate_stationary_observable(a: Union[np.ndarray, torch.Tensor],
                                     stationary_distribution: Union[np.ndarray, torch.Tensor])\
         -> Union[np.ndarray, torch.Tensor]:
