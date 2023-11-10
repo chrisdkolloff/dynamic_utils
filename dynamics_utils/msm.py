@@ -580,13 +580,3 @@ def divide_trajectories(trajectories: list[torch.Tensor], thresholds: list[float
         divided_trajectories.append(subtrajectories)
 
     return divided_trajectories
-
-# Example usage
-trajectories = [torch.tensor([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6], [0.7, 0.8]]),
-                torch.tensor([[0.2, 0.3], [0.4, 0.5], [0.6, 0.7], [0.8, 0.9]])]
-thresholds = [0.5]
-
-divided = divide_trajectories(trajectories, thresholds)
-for traj in divided:
-    for subtraj in traj:
-        print(subtraj)
