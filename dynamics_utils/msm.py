@@ -521,3 +521,72 @@ def calculate_delta_G_1D(stationary_distribution: Union[torch.Tensor, np.ndarray
     float
     """
     return - torch.log(stationary_distribution[:barrier_state].sum() / stationary_distribution[barrier_state:].sum())
+
+
+@ensure_tensor
+def divide_trajectories(trajectories: list[torch.Tensor], thresholds: list[float]) -> list[list[torch.Tensor]]:
+    """
+    Divides a list of trajectories into subtrajectories based on threshold values.
+
+    Parameters
+    ----------
+    trajectories:  List[torch.Tensor]
+        List of trajectories, each trajectory is a tensor.
+    thresholds: List[float]
+        List of threshold values for dividing trajectories.
+
+    Returns
+    -------
+    List[torch.Tensor]
+        List of lists containing subtrajectories.
+    """
+    if not isinstance(trajectories, list):
+        trajectories = [trajectories]
+
+    if not isinstance(thresholds, list):
+        thresholds = [thresholds]
+
+    # Make sure all trajectories are 2D tensors
+    trajectories = [torch.atleast_2d(traj) for traj in trajectories]
+
+    # If not all trajectories have the same dimension, raise an error
+    if len(set([traj.shape[1] for traj in trajectories])) > 1:
+        raise ValueError("Not all trajectories have the same dimension.")
+
+    # If number of thresholds is not equal to the dimension of the trajectories, broadcast thresholds
+    if len(thresholds) != trajectories[0].shape[1]:
+        thresholds = thresholds * trajectories[0].shape[1]
+
+    divided_trajectories = []
+
+    for traj in trajectories:
+        subtrajectories = []
+        start_idx = 0
+
+        # Convert thresholds to a tensor for efficient broadcasting
+        thresholds_tensor = torch.tensor(thresholds).view(1, -1)
+
+        # Check for threshold crossings
+        crosses_threshold = ((traj[:-1] < thresholds_tensor) & (traj[1:] >= thresholds_tensor)) | \
+                            ((traj[:-1] >= thresholds_tensor) & (traj[1:] < thresholds_tensor))
+        crossing_indices = torch.where(crosses_threshold.any(dim=1))[0] + 1
+
+        # Split the trajectory based on crossing indices
+        for idx in crossing_indices:
+            subtrajectories.append(traj[start_idx:idx])
+            start_idx = idx
+        subtrajectories.append(traj[start_idx:])
+
+        divided_trajectories.append(subtrajectories)
+
+    return divided_trajectories
+
+# Example usage
+trajectories = [torch.tensor([[0.1, 0.2], [0.3, 0.4], [0.5, 0.6], [0.7, 0.8]]),
+                torch.tensor([[0.2, 0.3], [0.4, 0.5], [0.6, 0.7], [0.8, 0.9]])]
+thresholds = [0.5]
+
+divided = divide_trajectories(trajectories, thresholds)
+for traj in divided:
+    for subtraj in traj:
+        print(subtraj)
