@@ -1,6 +1,6 @@
-# Dynamic Utils
+# dynamics-utils
 
-`dynamic_utils` is a Python module containing utilities for dealing with dynamic data, specifically focusing on 
+`dynamics_utils` is a Python module containing utilities for dealing with dynamic data, specifically focusing on 
 Markov State Models (MSM) and Nuclear Magnetic Resonance (NMR).
 
 ## Features
@@ -16,7 +16,7 @@ Markov State Models (MSM) and Nuclear Magnetic Resonance (NMR).
 You can install the latest version of `dynamic_utils` directly from GitHub:
 
 ```bash
-pip install git+https://github.com/chrisdkolloff/dynamic_utils.git#egg=dynamic_utils
+pip install git+https://github.com/chrisdkolloff/dynamics_utils.git#egg=dynamics_utils
 ```
 
 ## Dependencies
