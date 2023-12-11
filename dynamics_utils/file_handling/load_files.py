@@ -1,8 +1,10 @@
+import warnings
+
 import h5py
 import torch
 
 
-class HDFReader:
+class HDFLoader:
     def __init__(self, file_name: str):
         self.file_name = file_name
 
@@ -43,3 +45,9 @@ class HDFReader:
 
     def values(self):
         return self.data.values()
+
+
+class HDFReader(HDFLoader):
+    def __init__(self, file_name: str):
+        super().__init__(file_name)
+        warnings.warn('HDFReader is deprecated. Use HDFLoader instead.')
