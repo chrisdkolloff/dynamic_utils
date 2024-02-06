@@ -40,9 +40,6 @@ def ensure_tensor(func):
         # Execute the function
         result = func(*converted_args, **converted_kwargs)
 
-        # Convert result(s) back to the original type
-        result = to_original_types(result, original_types)
-
         return result
 
     return wrapper
