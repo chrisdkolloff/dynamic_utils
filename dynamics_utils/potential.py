@@ -1,8 +1,7 @@
 import numpy as np
 
 
-def step_high_friction_langevin(x, grad, dt=0.1, kT=15.0, mGamma=1000.0, seed = None):
-    np.random.seed(seed)
+def step_high_friction_langevin(x, grad, dt=0.1, kT=15.0, mGamma=1000.0):
     return (
             x
             - dt / mGamma * grad(x)
@@ -31,10 +30,10 @@ class LangevinSampler:
         self.dt = dt
         self.kT = kT
         self.mGamma = mGamma
-        self.seed = seed
+        np.random.seed(seed)
 
     def step(self):
-        self.x = step_high_friction_langevin(self.x, self.potential.grad, self.dt, self.kT, self.mGamma, self.seed)
+        self.x = step_high_friction_langevin(self.x, self.potential.grad, self.dt, self.kT, self.mGamma)
 
     def run(self, nsteps):
         x = np.zeros((nsteps, *self.x.shape))
