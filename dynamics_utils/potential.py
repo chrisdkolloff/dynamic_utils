@@ -25,15 +25,16 @@ class OneDimensionalDoubleWellPotential:
 
 
 class LangevinSampler:
-    def __init__(self, potential, x0=0.0, dt=0.1, kT=15.0, mGamma=1000.0):
+    def __init__(self, potential, x0=0.0, dt=0.1, kT=15.0, mGamma=1000.0, seed = None):
         self.potential = potential
         self.x = np.array([x0])
         self.dt = dt
         self.kT = kT
         self.mGamma = mGamma
+        self.seed = seed
 
     def step(self):
-        self.x = step_high_friction_langevin(self.x, self.potential.grad, self.dt, self.kT, self.mGamma)
+        self.x = step_high_friction_langevin(self.x, self.potential.grad, self.dt, self.kT, self.mGamma, self.seed)
 
     def run(self, nsteps):
         x = np.zeros((nsteps, *self.x.shape))
