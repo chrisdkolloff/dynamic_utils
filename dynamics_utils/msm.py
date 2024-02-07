@@ -208,7 +208,9 @@ def calculate_acf_from_spectral_components(k: Union[np.ndarray, torch.Tensor],
     Union[np.ndarray, torch.Tensor], shape (k, )
     """
     stationary_distribution = leigvecs[:, 0]
-    a = mean_center(torch.atleast_2d(a))
+    if a.dim() == 1:
+        a = a.unsqueeze(0)  # Convert from (n,) to (n, 1)
+    a = mean_center(a)
     amplitudes_dynamic = amplitudes_from_observables(a, leigvecs[:, 1:])[:, :n_components]
     amplitudes_stationary = amplitudes_from_observables(a, stationary_distribution)
     acf = amplitudes_stationary.T + torch.matmul((eigvals[:n_components, None] ** (k * lag * dt_traj)).T,
