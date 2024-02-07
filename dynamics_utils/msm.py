@@ -31,6 +31,7 @@ def timescales_from_eigvals(eigvals: Union[np.ndarray, torch.Tensor], lag: int =
     """
     return - dt_traj * lag / torch.log(torch.abs(eigvals))
 
+
 @ensure_tensor
 def amplitudes_from_observables(a: Union[np.ndarray, torch.Tensor], leigvecs: Union[np.ndarray, torch.Tensor]) \
         -> Union[np.ndarray, torch.Tensor]:
@@ -52,7 +53,7 @@ def amplitudes_from_observables(a: Union[np.ndarray, torch.Tensor], leigvecs: Un
 @ensure_tensor
 def amplitudes_from_observables_general(a: Union[np.ndarray, torch.Tensor], b: Union[np.ndarray, torch.Tensor],
                                         reigvecs: Union[np.ndarray, torch.Tensor],
-                                        leigvecs: Union[np.ndarray, torch.Tensor])\
+                                        leigvecs: Union[np.ndarray, torch.Tensor]) \
         -> Union[np.ndarray, torch.Tensor]:
     """
     General method to calculate amplitudes from observables
@@ -75,6 +76,7 @@ def amplitudes_from_observables_general(a: Union[np.ndarray, torch.Tensor], b: U
     pi = leigvecs[:, 0]
     return (pi * a).matmul(reigvecs) * leigvecs.T.matmul(b)
 
+
 @ensure_tensor
 def fingerprint_correlation(reigvecs: Union[np.ndarray, torch.Tensor],
                             eigvals: Union[np.ndarray, torch.Tensor],
@@ -82,7 +84,7 @@ def fingerprint_correlation(reigvecs: Union[np.ndarray, torch.Tensor],
                             a: Union[np.ndarray, torch.Tensor],
                             b: Union[np.ndarray, torch.Tensor, None] = None,
                             lag: int = 1,
-                            dt_traj: float = 1.)\
+                            dt_traj: float = 1.) \
         -> Tuple[Union[np.ndarray, torch.Tensor], Union[np.ndarray, torch.Tensor]]:
     """
     Convenience function to calculate fingerprint correlation from eigenvalues and eigenvectors
@@ -118,6 +120,7 @@ def fingerprint_correlation(reigvecs: Union[np.ndarray, torch.Tensor],
     amplitudes = amplitudes_from_observables_general(a, b, reigvecs, leigvecs)
     return timescales, amplitudes
 
+
 @ensure_tensor
 def calculate_acf_from_trajectory(traj: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, torch.Tensor]:
     """
@@ -139,6 +142,7 @@ def calculate_acf_from_trajectory(traj: Union[np.ndarray, torch.Tensor]) -> Unio
     traj = traj - traj.mean()
     acf = torch.nn.functional.conv1d(traj, traj)[len(traj[:]):]
     return acf
+
 
 @ensure_tensor
 def calculate_acf_from_transition_matrix(k: Union[np.ndarray, torch.Tensor],
@@ -165,7 +169,8 @@ def calculate_acf_from_transition_matrix(k: Union[np.ndarray, torch.Tensor],
     Union[np.ndarray, torch.Tensor], shape (k, )
 
     """
-    return torch.stack([torch.mm(torch.mm(a * stationary_distribution, matrix_power(transition_matrix, ki)), a) for ki in k])
+    return torch.stack(
+        [torch.mm(torch.mm(a * stationary_distribution, matrix_power(transition_matrix, ki)), a) for ki in k])
 
 
 @ensure_tensor
@@ -206,7 +211,8 @@ def calculate_acf_from_spectral_components(k: Union[np.ndarray, torch.Tensor],
     a = mean_center(torch.atleast_2d(a))
     amplitudes_dynamic = amplitudes_from_observables(a, leigvecs[:, 1:])[:, :n_components]
     amplitudes_stationary = amplitudes_from_observables(a, stationary_distribution)
-    acf = amplitudes_stationary.T + torch.matmul((eigvals[:n_components, None] ** (k * lag * dt_traj)).T, (amplitudes_dynamic).T)
+    acf = amplitudes_stationary.T + torch.matmul((eigvals[:n_components, None] ** (k * lag * dt_traj)).T,
+                                                 (amplitudes_dynamic).T)
     return acf.T
 
 
@@ -246,7 +252,7 @@ def eigendecomposition(transition_matrix: Union[np.ndarray, torch.Tensor],
 @ensure_tensor
 def rdl_recomposition(reigvecs: Union[np.ndarray, torch.Tensor],
                       eigvals: Union[np.ndarray, torch.Tensor],
-                      leigvecs: Union[np.ndarray, torch.Tensor])\
+                      leigvecs: Union[np.ndarray, torch.Tensor]) \
         -> Union[np.ndarray, torch.Tensor]:
     """
     Calculate T = reigvecs * diag(eigvals) * leigvecs.T through RDL recomposition
@@ -287,7 +293,7 @@ def row_normalise(tensor: Union[np.ndarray, torch.Tensor]) -> Union[np.ndarray, 
 
 @ensure_tensor
 def calculate_leigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
-                       reigvecs: Union[np.ndarray, torch.Tensor])\
+                       reigvecs: Union[np.ndarray, torch.Tensor]) \
         -> Union[np.ndarray, torch.Tensor]:
     """
     Calculates the left eigenvectors from the right eigenvectors and the stationary distribution
@@ -309,7 +315,7 @@ def calculate_leigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
 
 @ensure_tensor
 def calculate_reigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
-                       orthonormal_reigvecs: Union[np.ndarray, torch.Tensor])\
+                       orthonormal_reigvecs: Union[np.ndarray, torch.Tensor]) \
         -> Union[np.ndarray, torch.Tensor]:
     """
     Calculates the right eigenvectors from the orthonormal right eigenvectors and the stationary distribution
@@ -330,9 +336,10 @@ def calculate_reigvecs(stationary_distribution: Union[np.ndarray, torch.Tensor],
     reigvecs = orthonormal_reigvecs / torch.sqrt(stationary_distribution)[:, None]
     return torch.hstack([torch.ones(n, 1), reigvecs[:, 1:]])
 
+
 @ensure_tensor
 def calculate_stationary_observable(a: Union[np.ndarray, torch.Tensor],
-                                    stationary_distribution: Union[np.ndarray, torch.Tensor])\
+                                    stationary_distribution: Union[np.ndarray, torch.Tensor]) \
         -> Union[np.ndarray, torch.Tensor]:
     """
     Calculates the stationary observable
@@ -347,7 +354,9 @@ def calculate_stationary_observable(a: Union[np.ndarray, torch.Tensor],
     Union[np.ndarray, torch.Tensor] (k,)
 
     """
-    return stationary_distribution.matmul(torch.atleast_2d(a))
+    if a.dim() == 1:
+        a = a.unsqueeze(-1)  # Convert from (n,) to (n, 1)
+    return stationary_distribution.matmul(a)
 
 
 @ensure_tensor
@@ -439,7 +448,7 @@ def calculate_metastable_trajectory(pcca: pcca, dtraj: Union[np.ndarray, torch.T
 def calculate_mfpt(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.markov.msm.MarkovStateModel],
                    pcca_assignments: Union[torch.Tensor, np.ndarray],
                    lag: float = 1,
-                   dt_traj: float = 1.0)\
+                   dt_traj: float = 1.0) \
         -> Union[torch.Tensor, np.ndarray]:
     """
     Calculates the mean first passage time matrix
@@ -475,7 +484,7 @@ def calculate_mfpt(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.m
 def calculate_mfpt_rates(transition_matrix: Union[torch.Tensor, np.ndarray, deeptime.markov.msm.MarkovStateModel],
                          pcca_assignments: Union[torch.Tensor, np.ndarray],
                          lag: int = 1,
-                         dt_traj: float = 1.0)\
+                         dt_traj: float = 1.0) \
         -> torch.Tensor:
     """
     Calculates the mean first passage time rates (inverse of MFPT)
@@ -505,7 +514,7 @@ def calculate_mfpt_rates(transition_matrix: Union[torch.Tensor, np.ndarray, deep
 
 @ensure_tensor
 def calculate_delta_G_1D(stationary_distribution: Union[torch.Tensor, np.ndarray],
-                         barrier_state: int)\
+                         barrier_state: int) \
         -> float:
     """
     Calculates the free energy difference between two states in a 1D system
