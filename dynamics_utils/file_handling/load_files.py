@@ -1,4 +1,5 @@
 import warnings
+from typing import Any
 
 import h5py
 import torch
@@ -31,6 +32,7 @@ class HDFLoader:
 
         Args:
             dataset_name (str): The name of the dataset you want to retrieve.
+            default (Any): The default return value if the dataset doesn't exist
 
         Returns:
             Data from the requested dataset.
