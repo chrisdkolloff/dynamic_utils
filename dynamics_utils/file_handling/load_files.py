@@ -25,7 +25,7 @@ class HDFLoader:
             for key, value in data_dict.items():
                 hdf.create_dataset(key, data=value)
 
-    def read(self, dataset_name: str):
+    def read(self, dataset_name: str, default: Any = None):
         """
         Read data from an HDF5 file.
 
@@ -38,8 +38,8 @@ class HDFLoader:
         if dataset_name in self.keys:
             return self.data[dataset_name][()]
         else:
-            raise KeyError(f"Dataset '{dataset_name}' not found in the file.")
-
+            return default
+            
     def keys(self):
         return self.keys
 
